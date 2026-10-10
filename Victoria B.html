@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#075e54">
+<title>VICTORIA BÉ</title>
+<style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root {
+        --green: #075e54;
+        --green-2: #128c7e;
+        --green-light: #e5f3ef;
+        --bg: #e9edef;
+        --card: #ffffff;
+        --text: #202c33;
+        --muted: #667781;
+        --danger: #b42318;
+        --border: #d9dfe3;
+    }
+    html, body { height: 100%; }
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        overscroll-behavior-y: none;
+    }
+    button { font-family: inherit; cursor: pointer; }
+    input, button { font-size: 15px; }
+
+    /* ---------- AUTH ---------- */
+    .auth-wrap {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 22px 16px;
+    }
+    .auth-card {
+        width: 100%;
+        max-width: 440px;
+        background: var(--card);
+        border-radius: 18px;
+        padding: 24px 20px;
+        box-shadow: 0 8px 30px #0000001a;
+    }
+    .brand {
+        text-align: center;
+        margin-bottom: 18px;
+    }
+    .brand h1 {
+        margin: 0;
+        font-size: 26px;
+        letter-spacing: 3px;
+        color: var(--green);
+        font-weight: 800;
+    }
+    .brand p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+    }
+    .field { margin-top: 10px; }
+    .field label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 4px;
+        font-weight: 600;
+        letter-spacing: .3px;
+        text-transform: uppercase;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    input[type="search"] {
+        width: 100%;
+        padding: 13px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #fff;
+        outline: none;
+        transition: border-color .15s, box-shadow .15s;
+    }
+    input:focus {
+        border-color: var(--green);
+        box-shadow: 0 0 0 3px #075e5420;
+    }
+    .btn {
+        width: 100%;
+        padding: 13px 14px;
+        border: none;
+        border-radius: 10px;
+        background: var(--green);
+        color: #fff;
+        font-weight: 700;
+        margin-top: 10px;
+        transition: opacity .15s, transform .05s;
+    }
+    .btn:active { transform: scale(.99); }
+    .btn.secondary { background: var(--green-light); color: var(--green); }
+    .btn.danger { background: var(--danger); }
+    .btn.ghost { background: transparent; color: var(--green); border: 1px solid var(--green); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+    .status {
+        margin-top: 12px;
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--muted);
+        overflow-wrap: anywhere;
+        min-height: 18px;
+    }
+    .status.error { color: var(--danger); }
+    .status.ok { color: #16803c; }
+    .divider {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--muted);
+        font-size: 12px;
+        margin: 16px 0 4px;
+    }
+    .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+    }
+
+    /* ---------- APP ---------- */
+    #appArea { display: none; min-height: 100vh; flex-direction: column; }
+
+    .app-header {
+        background: var(--green);
+        color: #fff;
+        padding: 14px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: sticky;
+        top: 0;
+        z-index: 4;
+        box-shadow: 0 2px 10px #0003;
+    }
+    .app-header .avatar {
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        background: #ffffff22;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 15px;
+        flex-shrink: 0;
+        color: #fff;
+    }
+    .app-header .who { flex: 1; min-width: 0; }
+    .app-header .who strong {
+        display: block;
+        font-size: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .app-header .who span {
+        display: block;
+        font-size: 11px;
+        opacity: .85;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .icon-btn {
+        background: #ffffff1f;
+        border: none;
+        color: #fff;
+        width: 38px; height: 38px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+    .icon-btn:active { background: #ffffff33; }
+
+    .search-wrap {
+        padding: 10px 14px 4px;
+        background: var(--green);
+    }
+    .search-inner {
+        position: relative;
+    }
+    .search-inner input {
+        padding-left: 40px;
+        border-radius: 22px;
+        border: none;
+        background: #ffffff;
+        height: 42px;
+    }
+    .search-inner::before {
+        content: "🔍";
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 14px;
+        opacity: .55;
+        pointer-events: none;
+    }
+
+    .content {
+        flex: 1;
+        padding: 12px 12px 90px;
+        overflow-y: auto;
+    }
+    .tab-content[hidden] { display: none; }
+
+    .section-title {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .6px;
+        color: var(--muted);
+        font-weight: 700;
+        margin: 4px 6px 8px;
+    }
+
+    .list { display: flex; flex-direction: column; gap: 8px; }
+
+    .conv-item {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        width: 100%;
+        text-align: left;
+        background: var(--card);
+        border: none;
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: 0 1px 3px #0000000f;
+        transition: background .12s;
+    }
+    .conv-item:active { background: #f2f6f6; }
+    .conv-avatar {
+        width: 46px; height: 46px;
+        border-radius: 50%;
+        background: var(--green-light);
+        color: var(--green);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 17px;
+        flex-shrink: 0;
+    }
+    .conv-body { flex: 1; min-width: 0; }
+    .conv-body strong {
+        display: block;
+        font-size: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .conv-body span {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 2px;
+    }
+    .conv-meta {
+        text-align: right;
+        flex-shrink: 0;
+    }
+    .conv-meta small {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+    }
+
+    .empty-state {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 26px 18px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+        box-shadow: 0 1px 3px #0000000f;
+        line-height: 1.6;
+    }
+    .empty-state .big { font-size: 30px; display: block; margin-bottom: 8px; }
+
+    .info-card {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 16px;
+        box-shadow: 0 1px 3px #0000000f;
+        margin-bottom: 10px;
+    }
+    .info-card p { margin: 0 0 4px; font-size: 13px; color: var(--muted); line-height: 1.55; }
+    .info-card h3 { margin: 0 0 6px; font-size: 15px; }
+
+    /* ---------- BOTTOM NAV ---------- */
+    .bottom-nav {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: #fff;
+        border-top: 1px solid var(--border);
+        display: flex;
+        z-index: 6;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+        box-shadow: 0 -2px 12px #0000000f;
+    }
+    .nav-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        padding: 10px 4px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .nav-btn .ico { font-size: 19px; line-height: 1; }
+    .nav-btn.active { color: var(--green); }
+    .nav-btn.active .ico { transform: translateY(-1px); }
+
+    /* ---------- CHAT VIEW ---------- */
+    #chatView {
+        position: fixed;
+        inset: 0;
+        background: var(--bg);
+        z-index: 20;
+        display: none;
+        flex-direction: column;
+    }
+    #chatView.open { display: flex; }
+    .chat-header {
+        background: var(--green);
+        color: #fff;
+        padding: 12px 12px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+    .chat-header .back {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 22px;
+        width: 38px; height: 38px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+    }
+    .chat-header .back:active { background: #ffffff1f; }
+    .chat-header .title {
+        flex: 1;
+        min-width: 0;
+    }
+    .chat-header .title strong {
+        display: block;
+        font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .chat-header .title span {
+        display: block;
+        font-size: 11px;
+        opacity: .85;
+    }
+    #messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 14px 12px;
+        background:
+            radial-gradient(#00000008 1px, transparent 1px);
+        background-size: 18px 18px;
+        background-color: #efeae2;
+    }
+    .message {
+        padding: 8px 12px;
+        border-radius: 12px;
+        margin: 6px 0;
+        max-width: 82%;
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+        box-shadow: 0 1px 1px #0000000f;
+        font-size: 14.5px;
+        line-height: 1.4;
+        position: relative;
+        word-break: break-word;
+    }
+    .mine { margin-left: auto; background: #d9fdd3; border-bottom-right-radius: 4px; }
+    .theirs { margin-right: auto; background: #fff; border-bottom-left-radius: 4px; }
+    .message small {
+        display: block;
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 10px;
+        text-align: right;
+        opacity: .9;
+    }
+    .chat-form {
+        display: flex;
+        gap: 8px;
+        padding: 10px 10px;
+        background: #f0f2f5;
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0));
+        flex-shrink: 0;
+    }
+    .chat-form input {
+        flex: 1;
+        border-radius: 22px;
+        border: none;
+        padding: 12px 16px;
+        background: #fff;
+        height: 44px;
+    }
+    .chat-form button {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: var(--green);
+        color: #fff;
+        font-size: 18px;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+    }
+    .chat-form button:disabled { opacity: .55; }
+
+    /* ---------- CONTACTS ---------- */
+    .contact-item {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        background: var(--card);
+        border: none;
+        border-radius: 14px;
+        padding: 12px;
+        text-align: left;
+        width: 100%;
+        box-shadow: 0 1px 3px #0000000f;
+    }
+    .contact-avatar {
+        width: 42px; height: 42px;
+        border-radius: 50%;
+        background: #eef2f4;
+        color: var(--muted);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+    .contact-body { flex: 1; min-width: 0; }
+    .contact-body strong {
+        display: block;
+        font-size: 14.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .contact-body span {
+        display: block;
+        font-size: 12.5px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .tag {
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 10px;
+        background: var(--green-light);
+        color: var(--green);
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+    .tag.off { background: #eef2f4; color: var(--muted); }
+
+    /* ---------- TOAST ---------- */
+    #toast {
+        position: fixed;
+        left: 50%;
+        bottom: 96px;
+        transform: translate(-50%, 20px);
+        background: #202c33;
+        color: #fff;
+        padding: 11px 18px;
+        border-radius: 10px;
+        font-size: 13px;
+        max-width: 90%;
+        text-align: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .25s, transform .25s;
+        z-index: 100;
+        box-shadow: 0 6px 20px #0003;
+    }
+    #toast.show { opacity: 1; transform: translate(-50%, 0); }
+    #toast.error { background: var(--danger); }
+
+    .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- =====================================================================
+     ECRÃ DE AUTENTICAÇÃO
+     ===================================================================== -->
+<div class="auth-wrap" id="authArea">
+    <div class="auth-card">
+        <div class="brand">
+            <h1>VICTORIA BÉ</h1>
+            <p>Mensagens em tempo real</p>
+        </div>
+
+        <div class="field">
+            <label for="name">Nome</label>
+            <input id="name" type="text" maxlength="40" autocomplete="name" placeholder="O teu nome">
+        </div>
+        <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" autocomplete="email" placeholder="tu@exemplo.com">
+        </div>
+        <div class="field">
+            <label for="phone">Telefone (com indicativo)</label>
+            <input id="phone" type="tel" autocomplete="tel" placeholder="+351 912 345 678">
+        </div>
+        <div class="field">
+            <label for="password">Palavra-passe</label>
+            <input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="Mínimo 6 caracteres">
+        </div>
+
+        <button id="registerBtn" class="btn" type="button">Criar conta</button>
+        <div class="divider">ou</div>
+        <button id="loginBtn" class="btn secondary" type="button">Iniciar sessão</button>
+
+        <p id="status" class="status" role="status">A preparar aplicação…</p>
+    </div>
+</div>
+
+<!-- =====================================================================
+     APLICAÇÃO PRINCIPAL
+     ===================================================================== -->
+<div id="appArea">
+    <header class="app-header">
+        <div class="avatar" id="myAvatar">?</div>
+        <div class="who">
+            <strong id="userName">…</strong>
+            <span id="userEmail"></span>
+        </div>
+        <button class="icon-btn" id="logoutBtn" title="Terminar sessão" aria-label="Terminar sessão">⎋</button>
+    </header>
+
+    <div class="search-wrap" id="searchWrap">
+        <div class="search-inner">
+            <input id="searchInput" type="search" placeholder="Pesquisar conversas…" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="content" id="content">
+        <!-- ABA: MENSAGENS -->
+        <section class="tab-content" data-tab="messages" id="tabMessages">
+            <div class="section-title">Conversas</div>
+            <div class="list" id="conversationsList"></div>
+        </section>
+
+        <!-- ABA: CONTACTOS -->
+        <section class="tab-content" data-tab="contacts" id="tabContacts" hidden>
+            <div class="info-card">
+                <h3>Contactos do telefone</h3>
+                <p>Importa os contactos do teu telefone para encontrar quem já usa o Victoria Bé.</p>
+                <button class="btn" id="loadContactsBtn" type="button">📱 Carregar contactos</button>
+                <p id="contactsStatus" class="status" role="status"></p>
+            </div>
+            <div class="section-title">Contactos no Victoria Bé</div>
+            <div class="list" id="contactsList"></div>
+        </section>
+
+        <!-- ABA: NOVA CONVERSA -->
+        <section class="tab-content" data-tab="new" id="tabNew" hidden>
+            <div class="info-card">
+                <h3>Nova conversa</h3>
+                <p>Escreve o número de telefone (com indicativo) de quem queres contactar.</p>
+                <div class="field" style="margin-top:10px">
+                    <input id="newPhoneInput" type="tel" placeholder="+351 912 345 678" autocomplete="off">
+                </div>
+                <button class="btn" id="startChatBtn" type="button">Iniciar conversa</button>
+                <p id="newChatStatus" class="status" role="status"></p>
+            </div>
+        </section>
+    </div>
+
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-tab="messages" type="button">
+            <span class="ico">💬</span> Mensagens
+        </button>
+        <button class="nav-btn" data-tab="contacts" type="button">
+            <span class="ico">👥</span> Contactos
+        </button>
+        <button class="nav-btn" data-tab="new" type="button">
+            <span class="ico">✏️</span> Nova
+        </button>
+    </nav>
+</div>
+
+<!-- =====================================================================
+     VISTA DE CONVERSA (overlay)
+     ===================================================================== -->
+<div id="chatView">
+    <div class="chat-header">
+        <button class="back" id="chatBackBtn" type="button" aria-label="Voltar">←</button>
+        <div class="title">
+            <strong id="conversationTitle">Conversa</strong>
+            <span id="conversationSub">Online</span>
+        </div>
+    </div>
+    <div id="messages" aria-live="polite"></div>
+    <form class="chat-form" id="messageForm" autocomplete="off">
+        <input id="messageInput" type="text" maxlength="2000" autocomplete="off" placeholder="Escreve uma mensagem…" required>
+        <button id="sendBtn" type="submit" aria-label="Enviar">➤</button>
+    </form>
+</div>
+
+<div id="toast" role="alert" aria-live="assertive"></div>
+
+<script type="module">
+/* =====================================================================
+   IMPORTS FIREBASE
+   ===================================================================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+    signOut, onAuthStateChanged, updateProfile
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+import {
+    getFirestore, doc, setDoc, getDoc, getDocs, collection, query, where,
+    addDoc, orderBy, limit, onSnapshot, Timestamp
+} from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+/* =====================================================================
+   CONFIGURAÇÃO FIREBASE
+   ===================================================================== */
+const firebaseConfig = {
+    apiKey: "AIzaSyD9HM2goe8mAaTn7jgXDYJSOWHkUu0MjM8",
+    authDomain: "victoria-b.firebaseapp.com",
+    projectId: "victoria-b",
+    storageBucket: "victoria-b.firebasestorage.app",
+    messagingSenderId: "389765941311",
+    appId: "1:389765941311:web:0c34675c5911b51524108a",
+    measurementId: "G-WYJ1EZ2Z4N"
+};
+
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+/* =====================================================================
+   ESTADO
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+
+let currentUser        = null;
+let currentProfile     = null;
+let activeConversation = null;
+let stopMessages       = null;
+let stopConversations  = null;
+let allConversations   = [];      // cache para o filtro de pesquisa
+let searchTerm         = "";
+let registrationInFlight = false;
+let authRunId          = 0;
+let phoneContacts      = [];      // contactos já carregados do telefone
+
+/* =====================================================================
+   UTILITÁRIOS
+   ===================================================================== */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function normaliseEmail(v) { return String(v || "").trim().toLowerCase(); }
+
+/** Normaliza número de telefone para apenas dígitos. */
+function normalisePhone(v) {
+    return String(v || "").replace(/\D/g, "");
+}
+/** Últimos 9 dígitos (usado para correspondência flexível). */
+function phoneLast9(v) {
+    const d = normalisePhone(v);
+    if (!d) return "";
+    return d.length >= 9 ? d.slice(-9) : d;
+}
+function phoneIsValid(v) {
+    const d = normalisePhone(v);
+    return d.length >= 9 && d.length <= 15;
+}
+function initialsOf(name) {
+    const s = String(name || "?").trim();
+    if (!s) return "?";
+    const parts = s.split(/\s+/).slice(0, 2);
+    return parts.map(p => p[0] ? p[0].toUpperCase() : "").join("") || "?";
+}
+
+function explainError(error) {
+    console.error(error);
+    const raw = error && error.code ? String(error.code) : "";
+    const key = raw.includes("/") ? raw.split("/").pop() : raw;
+    const map = {
+        "email-already-in-use":   "Este email já está registado. Inicia sessão.",
+        "invalid-email":          "O email introduzido não é válido.",
+        "weak-password":          "A palavra-passe é muito fraca. Usa pelo menos 6 caracteres.",
+        "invalid-credential":     "Email ou palavra-passe incorretos.",
+        "wrong-password":         "Palavra-passe incorreta.",
+        "user-not-found":         "Não existe nenhuma conta com este email.",
+        "user-disabled":          "Esta conta foi desativada.",
+        "too-many-requests":      "Demasiadas tentativas. Tenta novamente mais tarde.",
+        "network-request-failed": "Falha de internet. Verifica a tua ligação.",
+        "operation-not-allowed":  "Este método de início de sessão não está ativado no Firebase.",
+        "permission-denied":      "Acesso recusado pelo Firestore. Verifica as regras de segurança.",
+        "unavailable":            "O serviço está temporariamente indisponível.",
+        "failed-precondition":    "Falta um índice no Firestore. Cria o índice sugerido na consola Firebase.",
+        "not-found":              "Recurso não encontrado.",
+        "already-exists":         "O recurso já existe.",
+        "resource-exhausted":     "Limite de utilização atingido. Tenta mais tarde.",
+        "unauthenticated":        "Sessão expirada. Inicia sessão novamente.",
+        "cancelled":              "Operação cancelada."
+    };
+    return map[key] || (error && error.message ? "Erro: " + error.message : "Ocorreu um erro. Tenta novamente.");
+}
+
+function setStatus(el, message, type) {
+    const node = typeof el === "string" ? $(el) : el;
+    if (!node) return;
+    node.textContent = message || "";
+    node.classList.remove("error", "ok");
+    if (type) node.classList.add(type);
+}
+
+let toastTimer = null;
+function toast(message, isError = false) {
+    const el = $("toast");
+    el.textContent = message;
+    el.classList.toggle("error", !!isError);
+    el.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove("show"), 4000);
+}
+
+function setBusy(id, busy, busyLabel) {
+    const btn = $(id);
+    if (!btn) return;
+    if (busy) {
+        if (!btn.dataset.label) btn.dataset.label = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = busyLabel || "A processar…";
+    } else {
+        btn.disabled = false;
+        if (btn.dataset.label) btn.textContent = btn.dataset.label;
+    }
+}
+
+function formatTime(ts) {
+    if (!ts) return "";
+    const date = typeof ts.toDate === "function" ? ts.toDate() : new Date(ts);
+    if (isNaN(date.getTime())) return "";
+    const time = date.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
+    const today = new Date();
+    const sameDay = date.toDateString() === today.toDateString();
+    if (sameDay) return time;
+    const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+    if (date.toDateString() === yesterday.toDateString()) return "Ontem " + time;
+    return date.toLocaleDateString("pt-PT", { day: "2-digit", month: "2-digit" }) + " " + time;
+}
+
+function cleanupListeners() {
+    if (stopMessages)      { try { stopMessages(); }      catch(_){} stopMessages = null; }
+    if (stopConversations) { try { stopConversations(); } catch(_){} stopConversations = null; }
+    activeConversation = null;
+    closeChatView();
+}
+
+/* =====================================================================
+   NAVEGAÇÃO ENTRE ABAS
+   ===================================================================== */
+function switchTab(tab) {
+    document.querySelectorAll(".nav-btn").forEach(b => {
+        b.classList.toggle("active", b.dataset.tab === tab);
+    });
+    document.querySelectorAll(".tab-content").forEach(c => {
+        c.hidden = c.dataset.tab !== tab;
+    });
+    $("searchWrap").classList.toggle("hidden", tab !== "messages");
+    const content = $("content");
+    if (content) content.scrollTop = 0;
+}
+document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+});
+
+/* =====================================================================
+   PESQUISA NA PÁGINA PRINCIPAL
+   ===================================================================== */
+$("searchInput").addEventListener("input", e => {
+    searchTerm = normaliseEmail(e.target.value);
+    renderConversations();
+});
+
+/* =====================================================================
+   CRIAR CONTA
+   ===================================================================== */
+$("registerBtn").addEventListener("click", async () => {
+    const name     = $("name").value.trim();
+    const email    = normaliseEmail($("email").value);
+    const phoneRaw = $("phone").value.trim();
+    const password = $("password").value;
+
+    if (name.length < 2)        { setStatus("status", "Escreve o teu nome (mínimo 2 caracteres).", "error"); return; }
+    if (!EMAIL_RE.test(email))  { setStatus("status", "Introduz um email válido.", "error"); return; }
+    if (!phoneIsValid(phoneRaw)){ setStatus("status", "Introduz um número de telefone válido (9 a 15 dígitos).", "error"); return; }
+    if (password.length < 6)    { setStatus("status", "A palavra-passe precisa de pelo menos 6 caracteres.", "error"); return; }
+
+    registrationInFlight = true;
+    setBusy("registerBtn", true, "A criar conta…");
+    setStatus("status", "A criar conta…");
+
+    try {
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        try { await updateProfile(cred.user, { displayName: name }); } catch(_) {}
+
+        const digits = normalisePhone(phoneRaw);
+        await setDoc(doc(db, "users", cred.user.uid), {
+            email: email,
+            displayName: name,
+            phone: digits,
+            phoneLast9: phoneLast9(digits),
+            createdAt: Timestamp.now()
+        }, { merge: true });
+
+        $("password").value = "";
+        setStatus("status", "Conta criada com sucesso!", "ok");
+        toast("Conta criada. Bem-vindo(a), " + name + "!");
+    } catch (error) {
+        const msg = explainError(error);
+        setStatus("status", msg, "error");
+        toast(msg, true);
+    } finally {
+        registrationInFlight = false;
+        setBusy("registerBtn", false);
+    }
+});
+
+/* =====================================================================
+   INICIAR SESSÃO
+   ===================================================================== */
+$("loginBtn").addEventListener("click", async () => {
+    const email    = normaliseEmail($("email").value);
+    const password = $("password").value;
+
+    if (!EMAIL_RE.test(email)) { setStatus("status", "Introduz um email válido.", "error"); return; }
+    if (!password)             { setStatus("status", "Introduz a palavra-passe.", "error"); return; }
+
+    setBusy("loginBtn", true, "A entrar…");
+    setStatus("status", "A iniciar sessão…");
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        $("password").value = "";
+        setStatus("status", "Sessão iniciada com sucesso!", "ok");
+        // onAuthStateChanged trata de mostrar a app + aba mensagens
+    } catch (error) {
+        const msg = explainError(error);
+        setStatus("status", msg, "error");
+        toast(msg, true);
+    } finally {
+        setBusy("loginBtn", false);
+    }
+});
+
+/* =====================================================================
+   TERMINAR SESSÃO
+   ===================================================================== */
+$("logoutBtn").addEventListener("click", async () => {
+    cleanupListeners();
+    try {
+        await signOut(auth);
+        toast("Sessão terminada.");
+    } catch (error) {
+        toast(explainError(error), true);
+    }
+});
+
+/* =====================================================================
+   OBSERVAR ESTADO DE AUTENTICAÇÃO
+   ===================================================================== */
+onAuthStateChanged(auth, async user => {
+    const runId = ++authRunId;
+    cleanupListeners();
+    allConversations = [];
+    phoneContacts = [];
+    $("conversationsList").replaceChildren();
+    $("contactsList").replaceChildren();
+    $("messages").replaceChildren();
+    setStatus("contactsStatus", "");
+    setStatus("newChatStatus", "");
+
+    currentUser = user;
+    currentProfile = null;
+
+    if (!user) {
+        $("authArea").style.display = "flex";
+        $("appArea").style.display  = "none";
+        setStatus("status", "Inicia sessão para continuar.");
+        return;
+    }
+
+    // Mostra a app imediatamente, com a aba de mensagens ativa
+    $("authArea").style.display = "none";
+    $("appArea").style.display  = "flex";
+    switchTab("messages");
+    $("userName").textContent  = "…";
+    $("userEmail").textContent = user.email || "";
+    $("myAvatar").textContent  = initialsOf(user.email || "?");
+
+    try {
+        const profile = await ensureProfile(user);
+        if (runId !== authRunId) return;
+
+        currentProfile = profile;
+        const display = profile.displayName || user.email || "Utilizador";
+        $("userName").textContent  = display;
+        $("userEmail").textContent = profile.email || user.email || "";
+        $("myAvatar").textContent  = initialsOf(display);
+
+        listenToConversations();
+        toast("Olá, " + display + "!");
+    } catch (error) {
+        if (runId !== authRunId) return;
+        toast(explainError(error), true);
+    }
+});
+/* =====================================================================
+   PERFIL
+   ===================================================================== */
+async function ensureProfile(user) {
+    const ref = doc(db, "users", user.uid);
+    let snap = await getDoc(ref);
+
+    // Se houver um registo em curso, dá-lhe tempo para escrever.
+    if (!snap.exists() && registrationInFlight) {
+        await sleep(1500);
+        snap = await getDoc(ref);
+    }
+
+    if (!snap.exists()) {
+        const fallback = user.displayName
+            || (user.email ? user.email.split("@")[0] : "Utilizador");
+        await setDoc(ref, {
+            email: (user.email || "").toLowerCase(),
+            displayName: fallback,
+            phone: "",
+            phoneLast9: "",
+            createdAt: Timestamp.now()
+        }, { merge: true });
+        snap = await getDoc(ref);
+    }
+
+    return snap.data() || {};
+}
+
+/* =====================================================================
+   LISTA DE CONVERSAS EM TEMPO REAL
+   ===================================================================== */
+function listenToConversations() {
+    if (!currentUser) return;
+    if (stopConversations) { stopConversations(); stopConversations = null; }
+
+    const q = query(
+        collection(db, "conversations"),
+        where("participantUids", "array-contains", currentUser.uid)
+    );
+
+    stopConversations = onSnapshot(q, snapshot => {
+        allConversations = snapshot.docs.map(d => {
+            const data = d.data() || {};
+            const uids = Array.isArray(data.participantUids) ? data.participantUids : [];
+            const otherUid = uids.find(u => u !== currentUser.uid) || null;
+            const names = data.participantNames || {};
+            return {
+                id: d.id,
+                otherUid,
+                title: names[otherUid] || "Contacto",
+                lastMessage: data.lastMessage || "",
+                updatedAt: data.updatedAt && typeof data.updatedAt.toMillis === "function"
+                    ? data.updatedAt.toMillis() : 0
+            };
+        }).sort((a, b) => b.updatedAt - a.updatedAt);
+
+        renderConversations();
+    }, error => {
+        toast(explainError(error), true);
+    });
+}
+
+/* =====================================================================
+   RENDERIZAÇÃO DA LISTA DE CONVERSAS (com filtro de pesquisa)
+   ===================================================================== */
+function renderConversations() {
+    const list = $("conversationsList");
+    list.replaceChildren();
+
+    const filtered = searchTerm
+        ? allConversations.filter(c =>
+            c.title.toLowerCase().includes(searchTerm) ||
+            c.lastMessage.toLowerCase().includes(searchTerm))
+        : allConversations;
+
+    if (!filtered.length) {
+        const div = document.createElement("div");
+        div.className = "empty-state";
+        if (allConversations.length === 0) {
+            div.innerHTML = '<span class="big">💬</span>Ainda não tens conversas.<br>Vai a <strong>Nova</strong> ou <strong>Contactos</strong> para começares.';
+        } else {
+            div.innerHTML = '<span class="big">🔍</span>Sem resultados para a tua pesquisa.';
+        }
+        list.appendChild(div);
+        return;
+    }
+
+    filtered.forEach(item => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "conv-item";
+
+        const av = document.createElement("div");
+        av.className = "conv-avatar";
+        av.textContent = initialsOf(item.title);
+
+        const body = document.createElement("div");
+        body.className = "conv-body";
+        const strong = document.createElement("strong");
+        strong.textContent = item.title;
+        const span = document.createElement("span");
+        span.textContent = item.lastMessage ? item.lastMessage.slice(0, 80) : "Sem mensagens";
+        body.append(strong, span);
+
+        const meta = document.createElement("div");
+        meta.className = "conv-meta";
+        const small = document.createElement("small");
+        small.textContent = item.updatedAt ? formatTime({ toDate: () => new Date(item.updatedAt) }) : "";
+        meta.appendChild(small);
+
+        btn.append(av, body, meta);
+        btn.addEventListener("click", () => openConversation(item.id, item.title, item.otherUid));
+        list.appendChild(btn);
+    });
+}
+
+/* =====================================================================
+   CARREGAR CONTACTOS DO TELEFONE
+   ===================================================================== */
+$("loadContactsBtn").addEventListener("click", async () => {
+    if (!currentUser) { toast("Inicia sessão primeiro.", true); return; }
+
+    const supported = ("contacts" in navigator) && ("ContactsManager" in window);
+    if (!supported) {
+        setStatus("contactsStatus",
+            "O teu navegador não suporta a importação de contactos. Usa o Chrome no Android em HTTPS, ou introduz o número manualmente na aba Nova.",
+            "error");
+        return;
+    }
+
+    setBusy("loadContactsBtn", true, "A abrir…");
+    setStatus("contactsStatus", "A abrir os contactos do telefone…");
+
+    try {
+        const props = ["name", "tel"];
+        const opts  = { multiple: true };
+        const picked = await navigator.contacts.select(props, opts);
+
+        if (!picked || !picked.length) {
+            setStatus("contactsStatus", "Nenhum contacto selecionado.", "error");
+            return;
+        }
+
+        // Normaliza e recolhe todos os "últimos 9 dígitos"
+        const listMap = new Map(); // last9 -> { name, tel }
+        picked.forEach(c => {
+            const name = (Array.isArray(c.name) && c.name[0]) ? c.name[0] : "Contacto";
+            (c.tel || []).forEach(t => {
+                const last9 = phoneLast9(t);
+                if (last9 && !listMap.has(last9)) {
+                    listMap.set(last9, { name, tel: t, last9 });
+                }
+            });
+        });
+
+        if (!listMap.size) {
+            setStatus("contactsStatus", "Os contactos selecionados não têm números válidos.", "error");
+            return;
+        }
+
+        setStatus("contactsStatus", "A procurar utilizadores no Victoria Bé…");
+
+        // Pesquisa no Firestore em blocos de 10 (limite do operador "in")
+        const last9List = [...listMap.keys()];
+        const chunks = [];
+        for (let i = 0; i < last9List.length; i += 10) chunks.push(last9List.slice(i, i + 10));
+
+        const found = new Map(); // uid -> { user, contactName }
+        for (const chunk of chunks) {
+            const q = query(collection(db, "users"), where("phoneLast9", "in", chunk));
+            const snap = await getDocs(q);
+            snap.forEach(d => {
+                if (d.id === currentUser.uid) return;
+                const data = d.data() || {};
+                const c = listMap.get(data.phoneLast9);
+                found.set(d.id, { user: { uid: d.id, ...data }, contactName: c ? c.name : null });
+            });
+        }
+
+        phoneContacts = [...found.values()];
+        renderContacts();
+
+        if (!phoneContacts.length) {
+            setStatus("contactsStatus",
+                "Nenhum dos contactos selecionados tem conta no Victoria Bé.",
+                "error");
+        } else {
+            setStatus("contactsStatus",
+                phoneContacts.length + " contacto(s) encontrado(s) no Victoria Bé.",
+                "ok");
+        }
+    } catch (error) {
+        if (error && (error.name === "AbortError" || error.name === "InvalidStateError")) {
+            setStatus("contactsStatus", "Seleção de contactos cancelada.", "error");
+        } else {
+            const msg = explainError(error);
+            setStatus("contactsStatus", msg, "error");
+            toast(msg, true);
+        }
+    } finally {
+        setBusy("loadContactsBtn", false);
+    }
+});
+
+function renderContacts() {
+    const list = $("contactsList");
+    list.replaceChildren();
+
+    if (!phoneContacts.length) {
+        const div = document.createElement("div");
+        div.className = "empty-state";
+        div.innerHTML = '<span class="big">👥</span>Carrega os contactos do telefone para veres quem já usa o Victoria Bé.';
+        list.appendChild(div);
+        return;
+    }
+
+    phoneContacts.forEach(({ user, contactName }) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "contact-item";
+
+        const av = document.createElement("div");
+        av.className = "contact-avatar";
+        av.textContent = initialsOf(user.displayName || user.email);
+
+        const body = document.createElement("div");
+        body.className = "contact-body";
+        const strong = document.createElement("strong");
+        strong.textContent = user.displayName || user.email || "Utilizador";
+        const span = document.createElement("span");
+        span.textContent = contactName ? ("Guardado como: " + contactName) : (user.phone || "");
+        body.append(strong, span);
+
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = "Abrir";
+
+        btn.append(av, body, tag);
+        btn.addEventListener("click", async () => {
+            try {
+                const id = await ensureConversation(user);
+                openConversation(id, user.displayName || user.email || "Contacto", user.uid);
+            } catch (error) {
+                toast(explainError(error), true);
+            }
+        });
+        list.appendChild(btn);
+    });
+}
+
+/* =====================================================================
+   NOVA CONVERSA POR NÚMERO
+   ===================================================================== */
+$("startChatBtn").addEventListener("click", async () => {
+    if (!currentUser) { toast("Inicia sessão primeiro.", true); return; }
+
+    const raw = $("newPhoneInput").value.trim();
+    if (!phoneIsValid(raw)) {
+        setStatus("newChatStatus", "Introduz um número válido (9 a 15 dígitos, com indicativo).", "error");
+        return;
+    }
+
+    const last9 = phoneLast9(raw);
+    if (currentProfile && currentProfile.phoneLast9 && currentProfile.phoneLast9 === last9) {
+        setStatus("newChatStatus", "Não podes iniciar uma conversa contigo mesmo.", "error");
+        return;
+    }
+
+    setBusy("startChatBtn", true, "A procurar…");
+    setStatus("newChatStatus", "A procurar utilizador…");
+
+    try {
+        const q = query(collection(db, "users"), where("phoneLast9", "==", last9));
+        const snap = await getDocs(q);
+        const match = snap.docs.find(d => d.id !== currentUser.uid);
+
+        if (!match) {
+            setStatus("newChatStatus",
+                "Nenhum utilizador com esse número. Confirma que a pessoa já criou conta no Victoria Bé.",
+                "error");
+            return;
+        }
+
+        const contact = { uid: match.id, ...match.data() };
+        const id = await ensureConversation(contact);
+        openConversation(id, contact.displayName || contact.email || "Contacto", contact.uid);
+        $("newPhoneInput").value = "";
+        setStatus("newChatStatus", "Conversa aberta.", "ok");
+    } catch (error) {
+        const msg = explainError(error);
+        setStatus("newChatStatus", msg, "error");
+        toast(msg, true);
+    } finally {
+        setBusy("startChatBtn", false);
+    }
+});
+
+/* =====================================================================
+   CRIAR / OBTER CONVERSA
+   ===================================================================== */
+async function ensureConversation(contact) {
+    const uids = [currentUser.uid, contact.uid].sort();
+    const conversationId = uids.join("__");
+    const ref = doc(db, "conversations", conversationId);
+
+    const snap = await getDoc(ref);
+    if (!snap.exists()) {
+        const names = {};
+        names[currentUser.uid] =
+            (currentProfile && currentProfile.displayName) || currentUser.email || "Utilizador";
+        names[contact.uid] =
+            contact.displayName || contact.email || "Contacto";
+
+        await setDoc(ref, {
+            participantUids: uids,
+            participantNames: names,
+            createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now(),
+            lastMessage: ""
+        });
+    }
+    return conversationId;
+}
+
+/* =====================================================================
+   VISTA DE CONVERSA
+   ===================================================================== */
+function openConversation(conversationId, title, otherUid) {
+    activeConversation = { id: conversationId, title, otherUid };
+
+    $("conversationTitle").textContent = title;
+    $("conversationSub").textContent   = "Conversa";
+    $("chatView").classList.add("open");
+    $("messages").replaceChildren();
+
+    listenToMessages(conversationId);
+
+    setTimeout(() => $("messageInput").focus(), 250);
+}
+
+function closeChatView() {
+    $("chatView").classList.remove("open");
+    if (stopMessages) { try { stopMessages(); } catch(_){} stopMessages = null; }
+    activeConversation = null;
+    $("messages").replaceChildren();
+}
+
+$("chatBackBtn").addEventListener("click", closeChatView);
+
+/* =====================================================================
+   OUVIR MENSAGENS EM TEMPO REAL
+   ===================================================================== */
+function listenToMessages(conversationId) {
+    if (stopMessages) { try { stopMessages(); } catch(_){} stopMessages = null; }
+
+    const q = query(
+        collection(db, "conversations", conversationId, "messages"),
+        orderBy("createdAt", "desc"),
+        limit(200)
+    );
+
+    stopMessages = onSnapshot(q, snapshot => {
+        const container = $("messages");
+        container.replaceChildren();
+
+        const docs = snapshot.docs.slice().reverse();
+
+        if (!docs.length) {
+            const empty = document.createElement("p");
+            empty.className = "empty-state";
+            empty.innerHTML = '<span class="big">👋</span>Ainda não há mensagens.<br>Diz olá!';
+            container.appendChild(empty);
+            return;
+        }
+
+        docs.forEach(messageDoc => {
+            const m = messageDoc.data() || {};
+            const mine = m.senderId === currentUser.uid;
+
+            const bubble = document.createElement("div");
+            bubble.className = "message " + (mine ? "mine" : "theirs");
+
+            const text = document.createElement("div");
+            text.textContent = m.text || "";
+
+            const time = document.createElement("small");
+            time.textContent = m.createdAt ? formatTime(m.createdAt) : "A enviar…";
+
+            bubble.append(text, time);
+            container.appendChild(bubble);
+        });
+
+        container.scrollTop = container.scrollHeight;
+    }, error => {
+        toast(explainError(error), true);
+    });
+}
+
+/* =====================================================================
+   ENVIAR MENSAGEM
+   ===================================================================== */
+$("messageForm").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!currentUser)        { toast("Inicia sessão primeiro.", true); return; }
+    if (!activeConversation) { toast("Abre uma conversa primeiro.", true); return; }
+
+    const input = $("messageInput");
+    const text  = input.value.trim();
+    if (!text) return;
+    if (text.length > 2000) { toast("Mensagem demasiado longa.", true); return; }
+
+    setBusy("sendBtn", true, "…");
+
+    const conversationId = activeConversation.id;
+    const now = Timestamp.now();
+
+    try {
+        await addDoc(collection(db, "conversations", conversationId, "messages"), {
+            senderId: currentUser.uid,
+            text: text,
+            createdAt: now
+        });
+
+        input.value = "";
+        input.focus();
+
+        try {
+            await setDoc(doc(db, "conversations", conversationId), {
+                updatedAt: now,
+                lastMessage: text.slice(0, 120)
+            }, { merge: true });
+        } catch (_) { /* pré-visualização não é crítica */ }
+
+    } catch (error) {
+        toast(explainError(error), true);
+    } finally {
+        setBusy("sendBtn", false, "➤");
+    }
+});
+
+/* =====================================================================
+   ATALHOS DE TECLADO
+   ===================================================================== */
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && $("chatView").classList.contains("open")) {
+        closeChatView();
+    }
+});
+
+/* =====================================================================
+   INICIALIZAÇÃO
+   ===================================================================== */
+switchTab("messages");
+</script>
+</body>
+</html>
